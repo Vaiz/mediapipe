@@ -1,39 +1,10 @@
 #pragma once
+#include "finger.h"
+#include "fingers.h"
 
-#include <array>
-#include <opencv2/core/types.hpp>
-
-inline float PointsDistance(cv::Point2f p1, cv::Point2f p2) {
-  return cv::norm(p1 - p2);
-}
-
-using FingerPointsArray = std::array<cv::Point2f, 4>;
-
-class Finger {
-  enum Points {
-    Root = 0,
-    Knucle1 = 1,
-    Knucle2 = 2,
-    Tip = 3,
-  };
-
- public:
-  Finger(cv::Point2f wrist, FingerPointsArray points)
-      : wrist(wrist), points(points) {}
-  cv::Point2f GetTip() const { return points[Tip]; }
-
- private:
-  cv::Point2f wrist;
-  FingerPointsArray points;
-};
-
-enum class Fingers {
-  Thumb = 0,
-  Index = 1,
-  Middle = 2,
-  Ring = 3,
-  Pinky = 4,
-};
+//inline float PointsDistance(cv::Point2f p1, cv::Point2f p2) {
+//  return cv::norm(p1 - p2);
+//}
 
 using PalmPointsArray = std::array<cv::Point2f, 21>;
 

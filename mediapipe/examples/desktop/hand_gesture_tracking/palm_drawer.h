@@ -4,7 +4,7 @@
 #include <opencv2/opencv.hpp>
 
 #include "mediapipe/framework/timestamp.h"
-#include "palm.h"
+#include "hand_model/palm.h"
 
 class PalmDrawer {
   using NormalizedPointsVec = std::vector<cv::Point2f>;

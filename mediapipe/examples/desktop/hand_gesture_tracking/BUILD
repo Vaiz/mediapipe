@@ -2,7 +2,7 @@
 
 cc_binary(
     name = "hand_gesture_tracking",
-    srcs = glob(["*.cc","*.h"]),
+    srcs = glob(["**/*.cc","**/*.h"]),
     deps = [
         "//mediapipe/framework:calculator_framework",
         "//mediapipe/framework/formats:image_frame",

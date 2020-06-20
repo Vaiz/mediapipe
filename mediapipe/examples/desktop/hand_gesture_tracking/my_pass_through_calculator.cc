@@ -19,7 +19,7 @@
 #include "mediapipe/framework/formats/landmark.pb.h"
 #include "mediapipe/framework/port/canonical_errors.h"
 #include "mouse_control.h"
-#include "palm.h"
+#include "hand_model/palm.h"
 #include "palm_drawer.h"
 
 namespace mediapipe {
