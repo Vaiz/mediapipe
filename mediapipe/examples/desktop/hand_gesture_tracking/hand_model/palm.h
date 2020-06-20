@@ -2,7 +2,7 @@
 #include "finger.h"
 #include "fingers.h"
 
-//inline float PointsDistance(cv::Point2f p1, cv::Point2f p2) {
+// inline float PointsDistance(cv::Point2f p1, cv::Point2f p2) {
 //  return cv::norm(p1 - p2);
 //}
 
@@ -41,9 +41,12 @@ class Palm {
     points.at(index).x = x;
     points.at(index).y = y;
   }
+  
   cv::Point2f GetPoint(size_t index) const { return points.at(index); }
+  
   static constexpr size_t GetPointsCount() { return 21; }
-  Finger GetFinger(Fingers fingerType) {
+
+  Finger GetFinger(Fingers fingerType) const {
     const size_t start = 1 + static_cast<size_t>(fingerType) * 4;
     const auto startIter = points.cbegin() + start;
 
@@ -55,6 +58,15 @@ class Palm {
     constexpr auto p = 0.01f;
     cv::Point2f wrist = points[WristPoint];
     return p < wrist.x && p < wrist.y;
+  }
+
+  void Merge(const Palm& secondPalm) {
+    if (!IsValid()) {
+      points = secondPalm.points;
+      return;
+    }
+    for (size_t i = 0; i < GetPointsCount(); ++i)
+      points[i] = (points[i] + secondPalm.points[i]) / 2;
   }
 
  private:

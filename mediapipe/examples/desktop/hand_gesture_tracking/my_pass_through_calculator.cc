@@ -18,7 +18,6 @@
 #include "mediapipe/framework/calculator_framework.h"
 #include "mediapipe/framework/formats/landmark.pb.h"
 #include "mediapipe/framework/port/canonical_errors.h"
-#include "mouse_control.h"
 #include "hand_model/palm.h"
 #include "palm_drawer.h"
 
@@ -79,11 +78,6 @@ class MyPassThroughCalculator final : public CalculatorBase {
           const NormalizedLandmark& landmark = curLandmarkList.landmark(i);
           palms.at(palmIndex).SetPoint(i, landmark.x(), landmark.y());
         }
-      }
-
-      if (palms.at(0).IsValid()) {
-        cv::Point2f indexTip = palms.at(0).GetFinger(Fingers::Index).GetTip();
-        MouseControl::SetCursorRelativePos(indexTip.x, indexTip.y);
       }
 
       PalmDrawer::GetInst().SetPalmInfo(

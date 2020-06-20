@@ -5,6 +5,7 @@
 
 #include "mediapipe/framework/timestamp.h"
 #include "hand_model/palm.h"
+#include "hand_model/stabilized_palm.h"
 
 class PalmDrawer {
   using NormalizedPointsVec = std::vector<cv::Point2f>;
@@ -25,4 +26,7 @@ class PalmDrawer {
   cv::Mat img;
   Palm palm1;
   Palm palm2;
+
+  StabilizedPalm spalm1;
+  StabilizedPalm spalm2;
 };
