@@ -34,6 +34,7 @@ http_archive(
     name = "rules_cc",
     strip_prefix = "rules_cc-master",
     urls = ["https://github.com/bazelbuild/rules_cc/archive/master.zip"],
+    sha256 = "4d32debb2de7e3d0a96b59859d3effc9860f8d1d1dedc0eae8e74bef86295b26",
 )
 
 # GoogleTest/GoogleMock framework. Used by most unit-tests.
@@ -335,3 +336,17 @@ http_archive(
 
 load("@org_tensorflow//tensorflow:workspace.bzl", "tf_workspace")
 tf_workspace(tf_repo_name = "org_tensorflow")
+
+
+new_local_repository(
+    name = "system_libs",
+    # pkg-config --variable=libdir x11
+    path = "/usr/lib",
+    build_file_content = """
+cc_library(
+    name = "x11",
+    srcs = ["libX11.so"],
+    visibility = ["//visibility:public"],
+)
+""",
+)

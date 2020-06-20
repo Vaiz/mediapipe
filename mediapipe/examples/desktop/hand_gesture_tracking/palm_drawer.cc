@@ -8,8 +8,8 @@ constexpr int kPalmPointRadius = 5;
 const auto kPalm1PointColor = cv::Scalar(0, 200, 60);
 const auto kPalm2PointColor = cv::Scalar(0, 60, 200);
 
-inline cv::Point MakePoint(std::pair<float, float> p) {
-  return {p.first * kWindowsSize, p.second * kWindowsSize};
+inline cv::Point TransformToMatPoint(cv::Point2f p) {
+  return {p.x * kWindowsSize, p.y * kWindowsSize};
 }
 }  // namespace
 
@@ -18,19 +18,17 @@ PalmDrawer::PalmDrawer()
   cv::namedWindow(kPalmWindowName);
   std::cout << "PalmDrawer created\r\n";
 }
-void PalmDrawer::SetPalmInfo(mediapipe::Timestamp t, NormalizedPointsVec _palm1,
-                             NormalizedPointsVec _palm2) {
+void PalmDrawer::SetPalmInfo(mediapipe::Timestamp t, Palm _palm1,
+                             Palm _palm2) {
   std::lock_guard<std::mutex> lock(mutex);
   if (lastTimestamp > t) return;
 
-  std::cout << "PalmDrawer::SetPalmInfo\r\n";
   lastTimestamp = t;
   palm1 = std::move(_palm1);
   palm2 = std::move(_palm2);
 }
 void PalmDrawer::Show() {  // call only from main thread
   std::lock_guard<std::mutex> lock(mutex);
-  std::cout << "PalmDrawer::Show\r\n";
   UpdateImage();
   cv::imshow(kPalmWindowName, img);
 }
@@ -40,16 +38,14 @@ PalmDrawer& PalmDrawer::GetInst() {
 }
 void PalmDrawer::UpdateImage() {
   img.setTo(kWindowsBackground);
-
-  std::cout << "PalmDrawer::Show\r\n";
-  std::cout << "palm1: " << palm1.size() << "\r\n";
-  for (size_t i = 0; i < palm1.size(); ++i) {
-    cv::Point p = MakePoint(palm1[i]);
-    std::cout << i << ": (" << p.x << ":" << p.y << "\r\n";
-    cv::circle(img, MakePoint(palm1[i]), kPalmPointRadius, kPalm1PointColor);
-  }
-  std::cout << "palm2: " << palm2.size() << "\r\n";
-  for (size_t i = 0; i < palm2.size(); ++i) {
-    cv::circle(img, MakePoint(palm2[i]), kPalmPointRadius, kPalm2PointColor);
+  DrawPalm(palm1, kPalm1PointColor);
+  DrawPalm(palm2, kPalm2PointColor);
+}
+void PalmDrawer::DrawPalm(const Palm& palm, cv::Scalar color) {
+  for (size_t i = 0; i < palm.GetPointsCount(); ++i) {
+    cv::Point p = TransformToMatPoint(palm.GetPoint(i));
+    cv::circle(img, p, kPalmPointRadius, color);
+    p.x += kPalmPointRadius + 2;
+    cv::addText(img, std::to_string(i), p, "Hack", -1, color);
   }
 }

@@ -18,5 +18,6 @@ cc_binary(
         "//mediapipe/gpu:gpu_buffer",
         "//mediapipe/gpu:gpu_shared_data_internal",
         "//mediapipe/graphs/hand_tracking:multi_hand_mobile_calculators", # only mobile calculators works with gpu
+        "@system_libs//:x11",
     ],
 )
