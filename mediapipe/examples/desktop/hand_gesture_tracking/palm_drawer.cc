@@ -11,6 +11,20 @@ const auto kPalm2PointColor = cv::Scalar(0, 60, 200);
 inline cv::Point TransformToMatPoint(cv::Point2f p) {
   return {p.x * kWindowsSize, p.y * kWindowsSize};
 }
+inline std::string TimeStampToTime(mediapipe::Timestamp t) {
+  const auto kTimestampUnitsPerSecond = static_cast<std::uint64_t>(mediapipe::Timestamp::kTimestampUnitsPerSecond);
+  const auto microseconds = t.Microseconds() % kTimestampUnitsPerSecond;
+  const auto seconds = t.Microseconds() / kTimestampUnitsPerSecond % 60;
+  const auto minutes = t.Microseconds() / kTimestampUnitsPerSecond / 60 % 60;
+  const auto hours = t.Microseconds() / kTimestampUnitsPerSecond / 60 / 60;
+  std::stringstream ss;
+  ss 
+    << std::setw(2) << std::setfill('0') << std::right << hours << ':' 
+    << std::setw(2) << std::setfill('0') << std::right << minutes << ':' 
+    << std::setw(2) << std::setfill('0') << std::right << seconds << '.' 
+    << std::setw(6) << std::setfill('0') << std::right << microseconds;
+  return ss.str();
+}
 }  // namespace
 
 PalmDrawer::PalmDrawer()
@@ -38,6 +52,8 @@ PalmDrawer& PalmDrawer::GetInst() {
 }
 void PalmDrawer::UpdateImage() {
   img.setTo(kWindowsBackground);
+  std::string timestamp_str = TimeStampToTime(lastTimestamp);
+  cv::addText(img, timestamp_str, { 10, kWindowsSize - 30 }, "Hack", -1, kPalm1PointColor);
   DrawPalm(palm1, kPalm1PointColor);
   DrawPalm(palm2, kPalm2PointColor);
 }
