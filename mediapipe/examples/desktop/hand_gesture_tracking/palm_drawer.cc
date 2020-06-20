@@ -77,7 +77,7 @@ void PalmDrawer::UpdateImage() {
 void PalmDrawer::DrawPalm(const Palm& palm, cv::Scalar color) {
   if (!palm.IsValid()) return;
 
-  for (size_t i = 0; i < palm.GetPointsCount(); ++i) {
+  for (size_t i = 0; i < Palm::kPalmPointsCount; ++i) {
     cv::Point p = TransformToMatPoint(palm.GetPoint(i));
     cv::circle(img, p, kPalmPointRadius, color);
     p.x += kPalmPointRadius + 2;

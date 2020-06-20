@@ -4,7 +4,7 @@
 
 class StabilizedPalm {
   static constexpr size_t kArraySize = 100;
-  static constexpr size_t kArrayTimeLengthMSec = 200;
+  static constexpr size_t kArrayTimeLengthMSec = 500;
   static constexpr size_t kArrayTimeLengthMicroseconds =
       kArrayTimeLengthMSec * 1000;
   static constexpr size_t kMSecPerUnit = kArrayTimeLengthMSec / kArraySize;
@@ -26,17 +26,29 @@ class StabilizedPalm {
     }
   }
   Palm GetPalm() const {
+    size_t count {0};
     Palm stabilizedPalm;
     for (const auto& ver : palmCollection) {
-      if (!IsTooOld(ver.timestamp)) stabilizedPalm.Merge(ver.palm);
+      if (!IsTooOld(ver.timestamp)) {
+        ++count;
+        stabilizedPalm.Add(ver.palm);
+      }
     }
+    if (count != 0)
+      stabilizedPalm.Divide(count);
     return stabilizedPalm;
   }
   Finger GetFinger(Fingers fingerType) {
+    size_t count {0};
     Finger stabilizedFinger;
     for (const auto& ver : palmCollection) {
-      if (!IsTooOld(ver.timestamp)) stabilizedFinger.Merge(ver.palm.GetFinger(fingerType));
+      if (!IsTooOld(ver.timestamp)) {
+        ++count;
+        stabilizedFinger.Add(ver.palm.GetFinger(fingerType));
+      }
     }
+    if (count != 0)
+      stabilizedFinger.Divide(count);
     return stabilizedFinger;
   }
  private:

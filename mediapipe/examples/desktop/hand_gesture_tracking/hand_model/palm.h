@@ -2,11 +2,6 @@
 #include "finger.h"
 #include "fingers.h"
 
-// inline float PointsDistance(cv::Point2f p1, cv::Point2f p2) {
-//  return cv::norm(p1 - p2);
-//}
-
-using PalmPointsArray = std::array<cv::Point2f, 21>;
 
 class Palm {
   enum Points {
@@ -32,6 +27,9 @@ class Palm {
     PinkyKnucle2 = 19,
     PinkyTip = 20,
   };
+public:
+  static constexpr size_t kPalmPointsCount = 21;
+  using PalmPointsArray = std::array<cv::Point2f, kPalmPointsCount>;
 
  public:
   Palm() = default;
@@ -43,14 +41,12 @@ class Palm {
   }
   
   cv::Point2f GetPoint(size_t index) const { return points.at(index); }
-  
-  static constexpr size_t GetPointsCount() { return 21; }
 
   Finger GetFinger(Fingers fingerType) const {
     const size_t start = 1 + static_cast<size_t>(fingerType) * 4;
     const auto startIter = points.cbegin() + start;
 
-    FingerPointsArray arr;
+    Finger::FingerPointsArray arr;
     std::copy_n(startIter, 4, arr.begin());
     return Finger(points[0], arr);
   }
@@ -60,13 +56,25 @@ class Palm {
     return p < wrist.x && p < wrist.y;
   }
 
+  void Add(const Palm& secondPalm) {
+    if (!IsValid()) {
+      points = secondPalm.points;
+      return;
+    }
+    for (size_t i = 0; i < kPalmPointsCount; ++i)
+      points[i] = (points[i] + secondPalm.points[i]);
+  }
   void Merge(const Palm& secondPalm) {
     if (!IsValid()) {
       points = secondPalm.points;
       return;
     }
-    for (size_t i = 0; i < GetPointsCount(); ++i)
+    for (size_t i = 0; i < kPalmPointsCount; ++i)
       points[i] = (points[i] + secondPalm.points[i]) / 2;
+  }
+  void Divide(float value) {
+    for (size_t i = 0; i < kPalmPointsCount; ++i)
+      points[i] /= value;
   }
 
  private:
