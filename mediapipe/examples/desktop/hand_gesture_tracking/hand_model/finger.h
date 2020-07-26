@@ -28,7 +28,7 @@ class Finger {
       points = other.points;
       return;
     }
-    wrist = (wrist + other.wrist) / 2;
+    wrist = (wrist + other.wrist);
     for (size_t i = 0; i < kFingerPointsCount; ++i)
       points[i] = (points[i] + other.points[i]);
   }
